@@ -1,0 +1,34 @@
+name: Weekly Sunday Reset
+
+on:
+  schedule:
+    # Runs at 11:55 PM (23:55) UTC every Sunday (0 represents Sunday)
+    - cron: '55 23 * * 0'
+  # Allows you to click "Run Now" manually just in case
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Run Leaderboard Script (RESET MODE)
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          JSONBIN_API_KEY: ${{ secrets.JSONBIN_API_KEY }}
+          JSONBIN_BIN_ID: ${{ secrets.JSONBIN_BIN_ID }}
+          # THIS IS THE MAGIC SWITCH:
+          IS_RESET: "true" 
+        run: python leaderboard.py
